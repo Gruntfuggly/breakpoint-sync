@@ -1,0 +1,63 @@
+{
+    "name": "breakpoint-sync",
+    "displayName": "Breakpoint Sync",
+    "description": "Synchronises breakpoints across windows",
+    "keywords": [
+        "debugger",
+        "breakpoints"
+    ],
+    "icon": "icon.png",
+    "version": "0.0.1",
+    "license": "MIT",
+    "publisher": "Gruntfuggly",
+    "repository": "https://github.com/Gruntfuggly/breakpoint-sync",
+    "engines": {
+        "vscode": "^1.5.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "breakpoint-sync.resetCache",
+                "title": "Reset Cache",
+                "category": "Breakpoint Sync"
+            },
+            {
+                "command": "breakpoint-sync.showCache",
+                "title": "Show Cache",
+                "category": "Breakpoint Sync"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Breakpoint Sync",
+            "properties": {
+                "breakpoint-sync.debug": {
+                    "default": false,
+                    "markdownDescription": "Create a debug channel in the output view",
+                    "type": "boolean"
+                },
+                "breakpoint-sync.include": {
+                    "default": [],
+                    "items": {
+                        "type": "string"
+                    },
+                    "markdownDescription": "Array of globs to match filenames against. Only breakpoints in files which match one of the globs will be synchoronised. Leave empty to match all breakpoints. See <https://www.malikbrowne.com/blog/a-beginners-guide-glob-patterns> for help.",
+                    "type": "array"
+                }
+            }
+        }
+    },
+    "devDependencies": {
+        "vscode": "^1.0.0"
+    },
+    "dependencies": {
+        "micromatch": "^4.0.2"
+    }
+}
