@@ -17,11 +17,13 @@ The source code is available on GitHub [here](https://github.com/Gruntfuggly/bre
 ## Configuration
 
 `breakpoint-sync.debug` (default:`false`)
-
 Set to true to create a debug channel in the output view
 
 `breakpoint-sync.globs` (default:`[]`)
 An array of globs to match. If empty, all breakpoints are synchronised, otherwise only files which match one of the glob patterns will be synchronised.
+
+`breakpoint-sync.syncState` (default:`true`)
+Set to false to disable synchronisation of enabled state of breakpoints
 
 ## Commands
 

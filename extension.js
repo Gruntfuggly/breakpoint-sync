@@ -7,11 +7,17 @@ function activate( context )
     var outputChannel;
     var syncInProgress = false;
 
-    function debug( text )
+    function debug( text, reveal )
     {
         if( outputChannel )
         {
-            outputChannel.appendLine( text );
+            var timestamp = new Date().toLocaleTimeString();
+
+            outputChannel.appendLine( timestamp + ' ' + text );
+            if( reveal === true )
+            {
+                outputChannel.show();
+            }
         }
     }
 
@@ -47,11 +53,11 @@ function activate( context )
             text += breakpoint.location.uri.path + ",";
             if( breakpoint.location.range.start )
             {
-                text += breakpoint.location.range.start.line + ':' + breakpoint.location.range.start.character;
+                text += ( breakpoint.location.range.start.line + 1 ) + ':' + breakpoint.location.range.start.character;
             }
             else
             {
-                text += breakpoint.location.range[ 0 ].line + ':' + breakpoint.location.range[ 0 ].character;
+                text += ( breakpoint.location.range[ 0 ].line + 1 ) + ':' + breakpoint.location.range[ 0 ].character;
             }
         }
         return text;
@@ -66,6 +72,23 @@ function activate( context )
         } );
 
         return posix_includes.length === 0 || micromatch.isMatch( breakpoint.location.uri.path, posix_includes );
+    }
+
+    function createBreakpoint( breakpoint )
+    {
+        var newBreakpoint = new vscode.SourceBreakpoint(
+            new vscode.Location(
+                vscode.Uri.file( breakpoint.location.uri.path ),
+                new vscode.Range(
+                    new vscode.Position( breakpoint.location.range[ 0 ].line, breakpoint.location.range[ 0 ].character ),
+                    new vscode.Position( breakpoint.location.range[ 1 ].line, breakpoint.location.range[ 1 ].character )
+                )
+            ),
+            breakpoint.enabled,
+            breakpoint.condition,
+            breakpoint.hitCondition,
+            breakpoint.logMessage );
+        vscode.debug.addBreakpoints( [ newBreakpoint ] );
     }
 
     function sync()
@@ -87,7 +110,7 @@ function activate( context )
                 {
                     var oldBreakpoints = [];
                     oldBreakpoints.push( breakpoint );
-                    debug( "Removing cached breakpoint at: " + simplify( breakpoint ) );
+                    debug( "Removing cached breakpoint " + simplify( breakpoint ) );
                     vscode.debug.removeBreakpoints( oldBreakpoints );
                 }
             }
@@ -100,22 +123,18 @@ function activate( context )
                 var existingBreakpoint = currentBreakpoints.find( findBreakpoint, simplify( breakpoint ) );
                 if( existingBreakpoint === undefined )
                 {
-                    debug( "Adding cached breakpoint at: " + simplify( breakpoint ) );
-                    var newBreakpoints = [];
-                    var newBreakpoint = new vscode.SourceBreakpoint(
-                        new vscode.Location(
-                            vscode.Uri.file( breakpoint.location.uri.path ),
-                            new vscode.Range(
-                                new vscode.Position( breakpoint.location.range[ 0 ].line, breakpoint.location.range[ 0 ].character ),
-                                new vscode.Position( breakpoint.location.range[ 1 ].line, breakpoint.location.range[ 1 ].character )
-                            )
-                        ),
-                        breakpoint.enabled,
-                        breakpoint.condition,
-                        breakpoint.hitCondition,
-                        breakpoint.logMessage );
-                    newBreakpoints.push( newBreakpoint );
-                    vscode.debug.addBreakpoints( newBreakpoints );
+                    debug( "Adding cached breakpoint " + simplify( breakpoint ) );
+                    createBreakpoint( breakpoint );
+                }
+                else
+                {
+                    if( existingBreakpoint.enabled !== breakpoint.enabled )
+                    {
+                        debug( ( existingBreakpoint.enabled ? "Disabling" : "Enabling" ) + " breakpoint " + simplify( breakpoint ) );
+                    }
+                    existingBreakpoint.enabled = breakpoint.enabled;
+                    vscode.debug.removeBreakpoints( [ existingBreakpoint ] );
+                    createBreakpoint( breakpoint );
                 }
             }
         } );
@@ -126,13 +145,13 @@ function activate( context )
     context.subscriptions.push( vscode.commands.registerCommand( 'breakpoint-sync.resetCache', function()
     {
         context.globalState.update( 'breakpoint-sync.breakpoints', [] );
-        debug( "Cache cleared" );
+        debug( "Cache cleared", true );
     } ) );
 
     context.subscriptions.push( vscode.commands.registerCommand( 'breakpoint-sync.showCache', function()
     {
         var breakpoints = context.globalState.get( 'breakpoint-sync.breakpoints' ) || [];
-        debug( JSON.stringify( breakpoints, null, 2 ) );
+        debug( JSON.stringify( breakpoints, null, 2 ), true );
     } ) );
 
     context.subscriptions.push( vscode.window.onDidChangeWindowState( function( e )
@@ -175,6 +194,15 @@ function activate( context )
                 {
                     debug( "Removing live breakpoint " + simplify( breakpoint ) );
                     breakpoints = breakpoints.filter( filterBreakpoint, simplify( breakpoint ) );
+                }
+            } );
+            e.changed.map( function( breakpoint )
+            {
+                if( include( breakpoint ) )
+                {
+                    debug( ( breakpoint.enabled ? "Enabled" : "Disabled" ) + " breakpoint " + simplify( breakpoint ) );
+                    var existingBreakpoint = breakpoints.find( findBreakpoint, simplify( breakpoint ) );
+                    existingBreakpoint.enabled = breakpoint.enabled;
                 }
             } );
             context.globalState.update( 'breakpoint-sync.breakpoints', breakpoints );

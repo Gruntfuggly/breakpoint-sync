@@ -50,6 +50,11 @@
                     },
                     "markdownDescription": "Array of globs to match filenames against. Only breakpoints in files which match one of the globs will be synchoronised. Leave empty to match all breakpoints. See <https://www.malikbrowne.com/blog/a-beginners-guide-glob-patterns> for help.",
                     "type": "array"
+                },
+                "breakpoint-sync.syncState": {
+                    "default": true,
+                    "markdownDescription": "Synchronise enabled/disabled state of breakpoints",
+                    "type": "boolean"
                 }
             }
         }
@@ -60,4 +65,4 @@
     "dependencies": {
         "micromatch": "^4.0.2"
     }
-}
+}}
