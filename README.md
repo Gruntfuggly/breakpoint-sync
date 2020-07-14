@@ -27,6 +27,8 @@ Set to false to disable synchronisation of enabled state of breakpoints
 
 ## Commands
 
+If you find there are lots of breakpoints from outside the current workspace that you are not interested in, you can remove them with the command **Breakpoint Sync: Remove Breakpoints From Outside This Workspace**.
+
 If you update the globs setting, or experience other issues, you can show the currently cached breakpoints with *Breakpoint Sync: Show Cache* and clear the cache with *Breakpoint Sync: Reset Cache*.
 
 ## Output

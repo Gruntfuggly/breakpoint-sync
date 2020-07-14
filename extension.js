@@ -108,10 +108,8 @@ function activate( context )
                 var existingBreakpoint = breakpoints.find( findBreakpoint, simplify( breakpoint ) );
                 if( existingBreakpoint === undefined )
                 {
-                    var oldBreakpoints = [];
-                    oldBreakpoints.push( breakpoint );
                     debug( "Removing cached breakpoint " + simplify( breakpoint ) );
-                    vscode.debug.removeBreakpoints( oldBreakpoints );
+                    vscode.debug.removeBreakpoints( [ breakpoint ] );
                 }
             }
         } );
@@ -141,6 +139,31 @@ function activate( context )
 
         syncInProgress = false;
     }
+
+    context.subscriptions.push( vscode.commands.registerCommand( 'breakpoint-sync.removeNonLocalBreakpoints', function()
+    {
+        var currentBreakpoints = vscode.debug.breakpoints;
+
+        currentBreakpoints.map( function( breakpoint )
+        {
+            var path = breakpoint.location.uri.path;
+
+            var found = false;
+            vscode.workspace.workspaceFolders.map( function( folder )
+            {
+                if( path.startsWith( folder.uri.path ) )
+                {
+                    found = true;
+                }
+            } );
+
+            if( found === false )
+            {
+                debug( "Removing breakpoint " + simplify( breakpoint ) );
+                vscode.debug.removeBreakpoints( [ breakpoint ] );
+            }
+        } );
+    } ) );
 
     context.subscriptions.push( vscode.commands.registerCommand( 'breakpoint-sync.resetCache', function()
     {

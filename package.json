@@ -24,6 +24,11 @@
     "contributes": {
         "commands": [
             {
+                "command": "breakpoint-sync.removeNonLocalBreakpoints",
+                "title": "Remove Breakpoints From Outside This Workspace",
+                "category": "Breakpoint Sync"
+            },
+            {
                 "command": "breakpoint-sync.resetCache",
                 "title": "Reset Cache",
                 "category": "Breakpoint Sync"

@@ -1,5 +1,7 @@
 # Breakpoint Sync
 
+- Add command to remove breakpoints from outside the workspace
+
 ## v0.0.2 - 2020-06-30
 
 - Support synchronisation of enabled/disabled state of breakpoints
