@@ -165,6 +165,25 @@ function activate( context )
         } );
     } ) );
 
+    context.subscriptions.push( vscode.commands.registerCommand( 'breakpoint-sync.removeBreakpointsFromCurrentFile', function()
+    {
+        if( vscode.window.activeTextEditor )
+        {
+            var currentPath = vscode.window.activeTextEditor.document.uri.path;
+
+            var currentBreakpoints = vscode.debug.breakpoints;
+
+            currentBreakpoints.map( function( breakpoint )
+            {
+                if( breakpoint.location.uri.path == currentPath )
+                {
+                    debug( "Removing breakpoint " + simplify( breakpoint ) );
+                    vscode.debug.removeBreakpoints( [ breakpoint ] );
+                }
+            } );
+        }
+    } ) );
+
     context.subscriptions.push( vscode.commands.registerCommand( 'breakpoint-sync.resetCache', function()
     {
         context.globalState.update( 'breakpoint-sync.breakpoints', [] );

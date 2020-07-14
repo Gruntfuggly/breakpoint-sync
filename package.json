@@ -29,6 +29,11 @@
                 "category": "Breakpoint Sync"
             },
             {
+                "command": "breakpoint-sync.removeBreakpointsFromCurrentFile",
+                "title": "Remove Breakpoints From Current File",
+                "category": "Breakpoint Sync"
+            },
+            {
                 "command": "breakpoint-sync.resetCache",
                 "title": "Reset Cache",
                 "category": "Breakpoint Sync"
