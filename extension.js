@@ -204,53 +204,6 @@ function activate( context )
         }
     } ) );
 
-    context.subscriptions.push( vscode.debug.onDidChangeBreakpoints( function( e )
-    {
-        if( syncInProgress === false )
-        {
-            var breakpoints = [];
-            try
-            {
-                breakpoints = context.globalState.get( 'breakpoint-sync.breakpoints' ) || [];
-            }
-            catch( e )
-            {
-                breakpoints = [];
-            }
-
-            e.added.map( function( breakpoint )
-            {
-                if( include( breakpoint ) )
-                {
-                    var existingBreakpoint = breakpoints.find( findBreakpoint, simplify( breakpoint ) );
-                    if( existingBreakpoint === undefined )
-                    {
-                        debug( "Adding live breakpoint " + simplify( breakpoint ) );
-                        breakpoints.push( breakpoint );
-                    }
-                }
-            } );
-            e.removed.map( function( breakpoint )
-            {
-                if( include( breakpoint ) )
-                {
-                    debug( "Removing live breakpoint " + simplify( breakpoint ) );
-                    breakpoints = breakpoints.filter( filterBreakpoint, simplify( breakpoint ) );
-                }
-            } );
-            e.changed.map( function( breakpoint )
-            {
-                if( include( breakpoint ) )
-                {
-                    debug( ( breakpoint.enabled ? "Enabled" : "Disabled" ) + " breakpoint " + simplify( breakpoint ) );
-                    var existingBreakpoint = breakpoints.find( findBreakpoint, simplify( breakpoint ) );
-                    existingBreakpoint.enabled = breakpoint.enabled;
-                }
-            } );
-            context.globalState.update( 'breakpoint-sync.breakpoints', breakpoints );
-        }
-    } ) );
-
     context.subscriptions.push( vscode.workspace.onDidChangeConfiguration( function( e )
     {
         if( e.affectsConfiguration( "breakpoint-sync.debug" ) )
@@ -259,11 +212,63 @@ function activate( context )
         }
     } ) );
 
+    function subsribeToLiveBreakpointUpdates()
+    {
+        context.subscriptions.push( vscode.debug.onDidChangeBreakpoints( function( e )
+        {
+            if( syncInProgress === false )
+            {
+                var breakpoints = [];
+                try
+                {
+                    breakpoints = context.globalState.get( 'breakpoint-sync.breakpoints' ) || [];
+                }
+                catch( e )
+                {
+                    breakpoints = [];
+                }
+
+                e.added.map( function( breakpoint )
+                {
+                    if( include( breakpoint ) )
+                    {
+                        var existingBreakpoint = breakpoints.find( findBreakpoint, simplify( breakpoint ) );
+                        if( existingBreakpoint === undefined )
+                        {
+                            debug( "Adding live breakpoint " + simplify( breakpoint ) );
+                            breakpoints.push( breakpoint );
+                        }
+                    }
+                } );
+                e.removed.map( function( breakpoint )
+                {
+                    if( include( breakpoint ) )
+                    {
+                        debug( "Removing live breakpoint " + simplify( breakpoint ) );
+                        breakpoints = breakpoints.filter( filterBreakpoint, simplify( breakpoint ) );
+                    }
+                } );
+                e.changed.map( function( breakpoint )
+                {
+                    if( include( breakpoint ) )
+                    {
+                        debug( ( breakpoint.enabled ? "Enabled" : "Disabled" ) + " breakpoint " + simplify( breakpoint ) );
+                        var existingBreakpoint = breakpoints.find( findBreakpoint, simplify( breakpoint ) );
+                        existingBreakpoint.enabled = breakpoint.enabled;
+                    }
+                } );
+                context.globalState.update( 'breakpoint-sync.breakpoints', breakpoints );
+            }
+        } ) );
+    }
+
     resetOutputChannel();
 
     debug( "Ready" );
 
     sync();
+
+    subsribeToLiveBreakpointUpdates();
 }
 
 exports.activate = activate;

@@ -1,5 +1,7 @@
 # Breakpoint Sync
 
+- Improve startup sync
+
 ## v0.0.3 - 2020-07-14
 
 - Add command to remove breakpoints from outside the workspace
