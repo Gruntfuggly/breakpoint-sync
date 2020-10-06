@@ -1,5 +1,7 @@
 # Breakpoint Sync
 
+## v0.0.4 - 2020-10-06
+
 - Improve startup sync
 
 ## v0.0.3 - 2020-07-14

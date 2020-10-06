@@ -7,7 +7,7 @@
         "breakpoints"
     ],
     "icon": "icon.png",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "license": "MIT",
     "publisher": "Gruntfuggly",
     "repository": "https://github.com/Gruntfuggly/breakpoint-sync",
