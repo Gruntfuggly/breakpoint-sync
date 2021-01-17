@@ -268,7 +268,13 @@ function activate( context )
 
     sync();
 
-    subsribeToLiveBreakpointUpdates();
+    var syncDelay = vscode.workspace.getConfiguration( 'breakpoint-sync' ).get( 'initialSyncDelay' );
+
+    setTimeout( function()
+    {
+        sync();
+        subsribeToLiveBreakpointUpdates();
+    }, syncDelay );
 }
 
 exports.activate = activate;

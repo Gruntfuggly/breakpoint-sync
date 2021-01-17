@@ -1,5 +1,7 @@
 # Breakpoint Sync
 
+- Add configurable startup sync delay
+
 ## v0.0.4 - 2020-10-06
 
 - Improve startup sync

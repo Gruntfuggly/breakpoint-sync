@@ -25,6 +25,9 @@ An array of globs to match. If empty, all breakpoints are synchronised, otherwis
 `breakpoint-sync.syncState` (default:`true`)
 Set to false to disable synchronisation of enabled state of breakpoints
 
+`breakpoint-sync.initialSyncDelay` (default: `5000`)
+Delay before initial sync (milliseconds). If you find breakpoints are being duplicated unexpectedly, try increasing this value.
+
 ## Commands
 
 If you find there are lots of breakpoints from outside the current workspace that you are no longer interested in, you can remove them with the command *Breakpoint Sync: Remove Breakpoints From Outside This Workspace*. There is also a convenience function to remove all breakpoints from the current file, *Breakpoint Sync: Remove Breakpoints From Current File*.

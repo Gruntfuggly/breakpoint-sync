@@ -65,6 +65,11 @@
                     "default": true,
                     "markdownDescription": "Synchronise enabled/disabled state of breakpoints",
                     "type": "boolean"
+                },
+                "breakpoint-sync.initialSyncDelay": {
+                    "default": 5000,
+                    "markdownDescription": "Delay before initial sync (milliseconds). If you find breakpoints are being duplicated unexpectedly, try increasing this value.",
+                    "type": "integer"
                 }
             }
         }
