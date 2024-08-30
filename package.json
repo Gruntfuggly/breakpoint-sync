@@ -78,7 +78,7 @@
         "vscode": "^1.0.0"
     },
     "dependencies": {
-        "micromatch": "^4.0.2"
+        "micromatch": "^4.0.8"
     },
     "__metadata": {
         "id": "7848bb13-cbdf-4860-ac18-6fc03382c1dd",
